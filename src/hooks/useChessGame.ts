@@ -16,21 +16,37 @@ import {
 export const useChessGame = () => {
   const [gameState, setGameState] = useState<GameState>(createInitialGameState());
   const [feedback, setFeedback] = useState<FeedbackMessage[]>([]);
+  const [modalFeedback, setModalFeedback] = useState<FeedbackMessage | null>(null);
+  const [isPaused, setIsPaused] = useState(false);
   const [promotionPending, setPromotionPending] = useState<Position | null>(null);
 
-  const addFeedback = useCallback((message: Omit<FeedbackMessage, 'id'>) => {
+  const addFeedback = useCallback((message: Omit<FeedbackMessage, 'id'>, showInModal = false) => {
     const id = Date.now().toString();
-    setFeedback(prev => [...prev, { ...message, id }]);
-    setTimeout(() => {
-      setFeedback(prev => prev.filter(f => f.id !== id));
-    }, 4000);
+    const feedbackMessage = { ...message, id };
+    
+    if (showInModal || message.type === 'error' || message.type === 'warning') {
+      setModalFeedback(feedbackMessage);
+      setIsPaused(true);
+    } else {
+      setFeedback(prev => [...prev, feedbackMessage]);
+      setTimeout(() => {
+        setFeedback(prev => prev.filter(f => f.id !== id));
+      }, 4000);
+    }
   }, []);
 
   const removeFeedback = useCallback((id: string) => {
     setFeedback(prev => prev.filter(f => f.id !== id));
   }, []);
 
+  const dismissModal = useCallback(() => {
+    setModalFeedback(null);
+    setIsPaused(false);
+  }, []);
+
   const selectSquare = useCallback((position: Position) => {
+    // Don't allow moves when game is paused
+    if (isPaused) return;
     setGameState(prev => {
       const piece = prev.board[position.row][position.col];
       
@@ -167,7 +183,7 @@ export const useChessGame = () => {
       
       return prev;
     });
-  }, [addFeedback]);
+  }, [isPaused, addFeedback]);
 
   const promotePawn = useCallback((pieceType: 'queen' | 'rook' | 'bishop' | 'knight') => {
     if (!promotionPending || !gameState.selectedPosition) return;
@@ -290,6 +306,8 @@ export const useChessGame = () => {
   return {
     gameState,
     feedback,
+    modalFeedback,
+    isPaused,
     promotionPending,
     selectSquare,
     promotePawn,
@@ -297,5 +315,6 @@ export const useChessGame = () => {
     undoMove,
     toggleTrainingMode,
     removeFeedback,
+    dismissModal,
   };
 };

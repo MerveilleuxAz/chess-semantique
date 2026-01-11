@@ -4,15 +4,19 @@ import { ChessBoard } from '@/components/chess/ChessBoard';
 import { GamePanel } from '@/components/chess/GamePanel';
 import { Notification } from '@/components/chess/Notification';
 import { PromotionModal } from '@/components/chess/PromotionModal';
+import { ErrorModal } from '@/components/chess/ErrorModal';
 import { useChessGame } from '@/hooks/useChessGame';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, BookOpen } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const Game = () => {
   const [searchParams] = useSearchParams();
   const {
     gameState,
     feedback,
+    modalFeedback,
+    isPaused,
     promotionPending,
     selectSquare,
     promotePawn,
@@ -20,6 +24,7 @@ const Game = () => {
     undoMove,
     toggleTrainingMode,
     removeFeedback,
+    dismissModal,
   } = useChessGame();
   
   // Enable training mode if URL parameter is set
@@ -50,7 +55,10 @@ const Game = () => {
         </div>
       </header>
       
-      <main className="container mx-auto px-4 py-6 lg:py-10">
+      <main className={cn(
+        "container mx-auto px-4 py-6 lg:py-10 transition-opacity duration-300",
+        isPaused && "opacity-50 pointer-events-none"
+      )}>
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 max-w-6xl mx-auto">
           {/* Chess Board */}
           <div className="flex-1 max-w-xl lg:max-w-2xl mx-auto lg:mx-0">
@@ -69,8 +77,11 @@ const Game = () => {
         </div>
       </main>
       
-      {/* Notifications */}
+      {/* Toast Notifications (info/success only) */}
       <Notification messages={feedback} onDismiss={removeFeedback} />
+      
+      {/* Error/Warning Modal */}
+      <ErrorModal message={modalFeedback} onDismiss={dismissModal} />
       
       {/* Promotion Modal */}
       <PromotionModal
