@@ -25,15 +25,15 @@ export const GamePanel = ({
   const getStatusText = () => {
     switch (gameStatus) {
       case 'check':
-        return 'Check!';
+        return 'Échec !';
       case 'checkmate':
-        return `Checkmate! ${currentPlayer === 'white' ? 'Black' : 'White'} wins!`;
+        return `Échec et mat ! Les ${currentPlayer === 'white' ? 'Noirs' : 'Blancs'} gagnent !`;
       case 'stalemate':
-        return 'Stalemate! Draw.';
+        return 'Pat ! Partie nulle.';
       case 'draw':
-        return 'Draw!';
+        return 'Partie nulle !';
       default:
-        return `${currentPlayer === 'white' ? 'White' : 'Black'} to move`;
+        return `Au tour des ${currentPlayer === 'white' ? 'Blancs' : 'Noirs'}`;
     }
   };
   
@@ -44,7 +44,7 @@ export const GamePanel = ({
         <CardHeader className="pb-3">
           <CardTitle className="text-lg font-serif flex items-center gap-2">
             <Crown className="w-5 h-5 text-accent" />
-            Game Status
+            État de la Partie
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -69,7 +69,7 @@ export const GamePanel = ({
                 {getStatusText()}
               </p>
               <p className="text-sm text-muted-foreground">
-                Move {Math.floor(moveHistory.length / 2) + 1}
+                Coup {Math.floor(moveHistory.length / 2) + 1}
               </p>
             </div>
           </div>
@@ -83,7 +83,7 @@ export const GamePanel = ({
             <div className="flex items-center gap-2">
               <GraduationCap className="w-5 h-5 text-accent" />
               <Label htmlFor="training-mode" className="font-medium">
-                Training Mode
+                Mode Entraînement
               </Label>
             </div>
             <Switch
@@ -94,7 +94,7 @@ export const GamePanel = ({
           </div>
           {isTrainingMode && (
             <p className="text-sm text-muted-foreground mt-2">
-              Hints and explanations are enabled.
+              Conseils et explications activés.
             </p>
           )}
         </CardContent>
@@ -103,13 +103,13 @@ export const GamePanel = ({
       {/* Move History */}
       <Card className="glass-card flex-1 min-h-0">
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg font-serif">Move History</CardTitle>
+          <CardTitle className="text-lg font-serif">Historique des Coups</CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <ScrollArea className="h-[200px] px-6 pb-6">
             {moveHistory.length === 0 ? (
               <p className="text-sm text-muted-foreground italic">
-                No moves yet. Click a piece to start.
+                Aucun coup joué. Cliquez sur une pièce pour commencer.
               </p>
             ) : (
               <div className="space-y-1">
@@ -149,7 +149,7 @@ export const GamePanel = ({
           disabled={moveHistory.length === 0}
         >
           <Undo2 className="w-4 h-4 mr-2" />
-          Undo
+          Annuler
         </Button>
         <Button
           variant="outline"
@@ -157,7 +157,7 @@ export const GamePanel = ({
           onClick={onReset}
         >
           <RotateCcw className="w-4 h-4 mr-2" />
-          Reset
+          Recommencer
         </Button>
       </div>
     </div>

@@ -41,15 +41,15 @@ const Game = () => {
         <div className="container mx-auto px-4 py-3 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="w-5 h-5" />
-            <span className="hidden sm:inline">Back to Home</span>
+            <span className="hidden sm:inline">Retour à l'accueil</span>
           </Link>
           
-          <h1 className="font-serif text-xl font-bold">Smart Chess</h1>
+          <h1 className="font-serif text-xl font-bold">Échecs Intelligents</h1>
           
           <Link to="/rules">
             <Button variant="ghost" size="sm">
               <BookOpen className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Rules</span>
+              <span className="hidden sm:inline">Règles</span>
             </Button>
           </Link>
         </div>

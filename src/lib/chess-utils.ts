@@ -228,34 +228,34 @@ export const createMoveNotation = (
 export const getTrainingHint = (piece: ChessPiece, from: Position, to: Position): string => {
   const hints: Record<PieceType, string[]> = {
     pawn: [
-      "Pawns move forward but capture diagonally.",
-      "Control the center with your pawns early in the game.",
-      "A passed pawn can become a powerful threat.",
+      "Les pions avancent tout droit mais capturent en diagonale.",
+      "Contrôlez le centre avec vos pions en début de partie.",
+      "Un pion passé peut devenir une menace redoutable.",
     ],
     knight: [
-      "Knights are great in closed positions.",
-      "Knights move in an L-shape and can jump over pieces.",
-      "Place knights in the center for maximum control.",
+      "Les cavaliers excellent dans les positions fermées.",
+      "Les cavaliers se déplacent en L et peuvent sauter par-dessus les pièces.",
+      "Placez vos cavaliers au centre pour un contrôle maximal.",
     ],
     bishop: [
-      "Bishops are powerful on long diagonals.",
-      "The bishop pair can be a significant advantage.",
-      "Bishops thrive in open positions.",
+      "Les fous sont puissants sur les longues diagonales.",
+      "La paire de fous peut être un avantage significatif.",
+      "Les fous excellent dans les positions ouvertes.",
     ],
     rook: [
-      "Rooks are strongest on open files.",
-      "Connect your rooks for maximum power.",
-      "The 7th rank is ideal for rooks.",
+      "Les tours sont plus fortes sur les colonnes ouvertes.",
+      "Connectez vos tours pour une puissance maximale.",
+      "La 7ème rangée est idéale pour les tours.",
     ],
     queen: [
-      "Don't bring your queen out too early.",
-      "The queen is your most powerful piece.",
-      "Use the queen to create multiple threats.",
+      "Ne sortez pas votre dame trop tôt.",
+      "La dame est votre pièce la plus puissante.",
+      "Utilisez la dame pour créer des menaces multiples.",
     ],
     king: [
-      "Keep your king safe, especially in the middlegame.",
-      "In the endgame, the king becomes an active piece.",
-      "Castle early to protect your king.",
+      "Gardez votre roi en sécurité, surtout en milieu de partie.",
+      "En finale, le roi devient une pièce active.",
+      "Roquez tôt pour protéger votre roi.",
     ],
   };
   
