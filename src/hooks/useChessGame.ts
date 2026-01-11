@@ -109,9 +109,14 @@ export const useChessGame = () => {
           }
           
           if (capturedPiece) {
+            const pieceNamesFr: Record<string, string> = {
+              king: 'Roi', queen: 'Dame', rook: 'Tour',
+              bishop: 'Fou', knight: 'Cavalier', pawn: 'Pion',
+            };
+            const colorFr = capturedPiece.color === 'white' ? 'blanc' : 'noir';
             addFeedback({
               type: 'success',
-              message: `Captured ${capturedPiece.color} ${capturedPiece.type}!`,
+              message: `${pieceNamesFr[capturedPiece.type]} ${colorFr} capturé !`,
               icon: '♟️',
             });
           }
@@ -243,9 +248,12 @@ export const useChessGame = () => {
         notation,
       };
       
+      const pieceNamesFr: Record<string, string> = {
+        queen: 'Dame', rook: 'Tour', bishop: 'Fou', knight: 'Cavalier',
+      };
       addFeedback({
         type: 'success',
-        message: `Pawn promoted to ${pieceType}!`,
+        message: `Pion promu en ${pieceNamesFr[pieceType]} !`,
         icon: '👑',
       });
       
@@ -268,7 +276,7 @@ export const useChessGame = () => {
     setPromotionPending(null);
     addFeedback({
       type: 'info',
-      message: 'New game started. White moves first.',
+      message: 'Nouvelle partie. Les Blancs commencent.',
       icon: 'ℹ️',
     });
   }, [addFeedback]);
@@ -278,7 +286,7 @@ export const useChessGame = () => {
       if (prev.moveHistory.length === 0) {
         addFeedback({
           type: 'warning',
-          message: 'No moves to undo.',
+          message: 'Aucun coup à annuler.',
           icon: '⚠️',
         });
         return prev;
@@ -299,7 +307,7 @@ export const useChessGame = () => {
       
       addFeedback({
         type: 'info',
-        message: 'Move undone.',
+        message: 'Coup annulé.',
         icon: '↩️',
       });
       
@@ -320,8 +328,8 @@ export const useChessGame = () => {
       addFeedback({
         type: 'info',
         message: newMode 
-          ? 'Training mode enabled. You\'ll see hints for your moves.' 
-          : 'Training mode disabled.',
+          ? 'Mode entraînement activé. Vous verrez des conseils pour vos coups.' 
+          : 'Mode entraînement désactivé.',
         icon: newMode ? '📚' : 'ℹ️',
       });
       return {

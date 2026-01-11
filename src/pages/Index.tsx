@@ -23,19 +23,19 @@ const Index = () => {
             {/* Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent mb-8 animate-fade-up">
               <Sparkles className="w-4 h-4" />
-              <span className="text-sm font-medium">Powered by Semantic Intelligence</span>
+              <span className="text-sm font-medium">Propulsé par l'Intelligence Sémantique</span>
             </div>
             
             {/* Title */}
             <h1 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold text-foreground mb-6 animate-fade-up" style={{ animationDelay: '100ms' }}>
-              Smart Chess
-              <span className="block text-accent mt-2">Learn & Play</span>
+              Échecs Intelligents
+              <span className="block text-accent mt-2">Apprendre & Jouer</span>
             </h1>
             
             {/* Subtitle */}
             <p className="text-lg sm:text-xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-fade-up" style={{ animationDelay: '200ms' }}>
-              Play chess with an intelligent assistant that explains the rules, 
-              prevents illegal moves, and helps you become a better player.
+              Jouez aux échecs avec un assistant intelligent qui explique les règles, 
+              empêche les coups illégaux et vous aide à devenir un meilleur joueur.
             </p>
             
             {/* CTA Buttons */}
@@ -43,7 +43,7 @@ const Index = () => {
               <Link to="/game">
                 <Button size="lg" className="group text-lg px-8 py-6 bg-primary hover:bg-primary/90">
                   <Crown className="w-5 h-5 mr-2" />
-                  Start Game
+                  Commencer une Partie
                   <ChevronRight className="w-5 h-5 ml-2 transition-transform group-hover:translate-x-1" />
                 </Button>
               </Link>
@@ -51,7 +51,7 @@ const Index = () => {
               <Link to="/rules">
                 <Button size="lg" variant="outline" className="text-lg px-8 py-6">
                   <BookOpen className="w-5 h-5 mr-2" />
-                  Learn the Rules
+                  Apprendre les Règles
                 </Button>
               </Link>
             </div>
@@ -63,7 +63,7 @@ const Index = () => {
               style={{ animationDelay: '400ms' }}
             >
               <GraduationCap className="w-5 h-5" />
-              <span>Or start in Training Mode</span>
+              <span>Ou commencer en Mode Entraînement</span>
             </Link>
           </div>
         </div>
@@ -75,18 +75,18 @@ const Index = () => {
           {[
             {
               icon: <Crown className="w-8 h-8" />,
-              title: 'Play Intelligently',
-              description: 'Every move is validated. Illegal moves are prevented with clear explanations.',
+              title: 'Jouez Intelligemment',
+              description: 'Chaque coup est validé. Les mouvements illégaux sont bloqués avec des explications claires.',
             },
             {
               icon: <BookOpen className="w-8 h-8" />,
-              title: 'Learn the Rules',
-              description: 'Comprehensive guides on piece movements, special rules, and winning strategies.',
+              title: 'Apprenez les Règles',
+              description: 'Guides complets sur les déplacements des pièces, les règles spéciales et les stratégies gagnantes.',
             },
             {
               icon: <GraduationCap className="w-8 h-8" />,
-              title: 'Training Mode',
-              description: 'Get hints and suggestions to improve your game with contextual feedback.',
+              title: 'Mode Entraînement',
+              description: 'Obtenez des conseils et suggestions pour améliorer votre jeu avec un retour contextuel.',
             },
           ].map((feature, index) => (
             <div
@@ -108,10 +108,10 @@ const Index = () => {
       <section className="container mx-auto px-4 py-20">
         <div className="max-w-2xl mx-auto text-center mb-12">
           <h2 className="font-serif text-3xl sm:text-4xl font-bold mb-4">
-            Beautiful, Intuitive Interface
+            Interface Belle et Intuitive
           </h2>
           <p className="text-muted-foreground">
-            A clean, modern design that focuses on what matters most – your game.
+            Un design épuré et moderne qui se concentre sur l'essentiel – votre partie.
           </p>
         </div>
         
@@ -135,7 +135,7 @@ const Index = () => {
         <div className="text-center mt-8">
           <Link to="/game">
             <Button size="lg">
-              Try it Now
+              Essayer Maintenant
               <ChevronRight className="w-5 h-5 ml-2" />
             </Button>
           </Link>
@@ -145,8 +145,8 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t border-border py-8">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p className="font-serif text-lg">Smart Chess</p>
-          <p className="text-sm mt-2">An intelligent chess learning experience</p>
+          <p className="font-serif text-lg">Échecs Intelligents</p>
+          <p className="text-sm mt-2">Une expérience d'apprentissage des échecs intelligente</p>
         </div>
       </footer>
     </div>
