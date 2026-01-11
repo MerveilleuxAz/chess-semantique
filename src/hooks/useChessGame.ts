@@ -4,7 +4,8 @@ import {
   Position, 
   Move, 
   FeedbackMessage,
-  ChessPiece
+  ChessPiece,
+  PieceType
 } from '@/types/chess';
 import { 
   createInitialGameState, 
@@ -12,6 +13,11 @@ import {
   createMoveNotation,
   getTrainingHint
 } from '@/lib/chess-utils';
+import {
+  getIllegalDestinationError,
+  getWrongColorError,
+  getNoLegalMovesError
+} from '@/lib/move-explanations';
 
 export const useChessGame = () => {
   const [gameState, setGameState] = useState<GameState>(createInitialGameState());
@@ -128,9 +134,13 @@ export const useChessGame = () => {
           };
         } else if (piece && piece.color !== prev.currentPlayer) {
           // Trying to move to enemy piece without legal move
+          const selectedPiece = prev.board[prev.selectedPosition.row][prev.selectedPosition.col]!;
+          const errorInfo = getIllegalDestinationError(selectedPiece, prev.selectedPosition, position, piece);
           addFeedback({
             type: 'error',
-            message: "Invalid move: you can't capture this piece from here.",
+            message: errorInfo.message,
+            explanation: errorInfo.explanation,
+            owlRule: errorInfo.owlRule,
             icon: '❌',
           });
           return {
@@ -140,10 +150,14 @@ export const useChessGame = () => {
           };
         } else {
           // Clicked on empty non-legal square
+          const selectedPiece = prev.board[prev.selectedPosition.row][prev.selectedPosition.col]!;
+          const errorInfo = getIllegalDestinationError(selectedPiece, prev.selectedPosition, position, null);
           addFeedback({
-            type: 'warning',
-            message: "Invalid move: this square is not reachable.",
-            icon: '⚠️',
+            type: 'error',
+            message: errorInfo.message,
+            explanation: errorInfo.explanation,
+            owlRule: errorInfo.owlRule,
+            icon: '❌',
           });
           return {
             ...prev,
@@ -156,9 +170,12 @@ export const useChessGame = () => {
       // No piece selected yet
       if (piece) {
         if (piece.color !== prev.currentPlayer) {
+          const errorInfo = getWrongColorError(prev.currentPlayer);
           addFeedback({
             type: 'warning',
-            message: `It's ${prev.currentPlayer}'s turn to move.`,
+            message: errorInfo.message,
+            explanation: errorInfo.explanation,
+            owlRule: errorInfo.owlRule,
             icon: '⚠️',
           });
           return prev;
@@ -167,9 +184,20 @@ export const useChessGame = () => {
         const legalMoves = calculateLegalMoves(prev.board, position, prev.currentPlayer);
         
         if (legalMoves.length === 0) {
+          const pieceNames: Record<PieceType, string> = {
+            king: 'Le Roi',
+            queen: 'La Dame',
+            rook: 'La Tour',
+            bishop: 'Le Fou',
+            knight: 'Le Cavalier',
+            pawn: 'Le Pion',
+          };
+          const errorInfo = getNoLegalMovesError(pieceNames[piece.type]);
           addFeedback({
             type: 'info',
-            message: "This piece has no legal moves.",
+            message: errorInfo.message,
+            explanation: errorInfo.explanation,
+            owlRule: errorInfo.owlRule,
             icon: 'ℹ️',
           });
         }

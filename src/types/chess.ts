@@ -37,4 +37,6 @@ export interface FeedbackMessage {
   type: 'error' | 'warning' | 'info' | 'success';
   message: string;
   icon: string;
+  explanation?: string;
+  owlRule?: string;
 }
