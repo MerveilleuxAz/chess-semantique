@@ -4,16 +4,16 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { 
-  Collapsible, 
-  CollapsibleContent, 
-  CollapsibleTrigger 
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger
 } from '@/components/ui/collapsible';
-import { 
-  Database, 
-  Code2, 
-  Layers, 
-  GitBranch, 
+import {
+  Database,
+  Code2,
+  Layers,
+  GitBranch,
   BookOpen,
   ChevronDown,
   ChevronRight,
@@ -105,7 +105,7 @@ export const OntologyPanel = ({
             </Badge>
           )}
         </div>
-        
+
         {/* Stats de l'ontologie */}
         {stats && (
           <div className="grid grid-cols-4 gap-2 mt-3">
@@ -155,7 +155,7 @@ export const OntologyPanel = ({
                   </div>
 
                   {/* Requête SPARQL */}
-                  <Collapsible 
+                  <Collapsible
                     open={expandedSections.sparql}
                     onOpenChange={() => toggleSection('sparql')}
                   >
@@ -176,10 +176,20 @@ export const OntologyPanel = ({
                         <Badge variant="outline" className="text-xs">
                           {currentQuery.sparqlResult.queryType}
                         </Badge>
-                        <pre className="p-3 rounded-lg bg-slate-900 text-slate-100 text-xs overflow-x-auto font-mono">
+                        <pre
+                          className="
+                            p-3 rounded-lg
+                            bg-slate-900 text-slate-100 text-xs font-mono
+                            overflow-x-auto
+                            max-w-full
+                            whitespace-pre-wrap
+                            break-all
+                          "
+                        >
+
                           {currentQuery.sparqlResult.query}
                         </pre>
-                        
+
                         {/* Résultats */}
                         {currentQuery.sparqlResult.results.length > 0 && (
                           <div className="mt-2">
@@ -188,8 +198,8 @@ export const OntologyPanel = ({
                             </p>
                             <div className="space-y-1">
                               {currentQuery.sparqlResult.results.map((result, idx) => (
-                                <div 
-                                  key={idx} 
+                                <div
+                                  key={idx}
                                   className="p-2 rounded bg-muted/30 text-xs font-mono"
                                 >
                                   {Object.entries(result).map(([key, value]) => (
@@ -231,9 +241,9 @@ export const OntologyPanel = ({
                             <p className="text-xs text-muted-foreground mb-1">Classes principales:</p>
                             <div className="flex flex-wrap gap-1">
                               {currentQuery.involvedClasses.map((cls, idx) => (
-                                <Badge 
-                                  key={idx} 
-                                  variant="outline" 
+                                <Badge
+                                  key={idx}
+                                  variant="outline"
                                   className="text-xs bg-accent/10 border-accent/30"
                                   title={cls.comment}
                                 >
@@ -243,15 +253,15 @@ export const OntologyPanel = ({
                             </div>
                           </div>
                         )}
-                        
+
                         {currentQuery.involvedSubClasses.length > 0 && (
                           <div>
                             <p className="text-xs text-muted-foreground mb-1">Sous-classes:</p>
                             <div className="flex flex-wrap gap-1">
                               {currentQuery.involvedSubClasses.map((cls, idx) => (
-                                <Badge 
-                                  key={idx} 
-                                  variant="outline" 
+                                <Badge
+                                  key={idx}
+                                  variant="outline"
                                   className="text-xs bg-blue-500/10 border-blue-500/30"
                                   title={cls.comment}
                                 >
@@ -291,17 +301,17 @@ export const OntologyPanel = ({
                     <CollapsibleContent>
                       <div className="mt-2 space-y-1 pl-6">
                         {currentQuery.involvedProperties.map((prop, idx) => (
-                          <div 
-                            key={idx} 
+                          <div
+                            key={idx}
                             className="p-2 rounded bg-muted/30 text-xs"
                           >
                             <div className="flex items-center gap-2">
-                              <Badge 
-                                variant="outline" 
+                              <Badge
+                                variant="outline"
                                 className={cn(
                                   "text-xs",
-                                  prop.type === 'object' 
-                                    ? "bg-purple-500/10 border-purple-500/30" 
+                                  prop.type === 'object'
+                                    ? "bg-purple-500/10 border-purple-500/30"
                                     : "bg-orange-500/10 border-orange-500/30"
                                 )}
                               >
@@ -343,8 +353,8 @@ export const OntologyPanel = ({
                       <CollapsibleContent>
                         <div className="mt-2 space-y-2 pl-6">
                           {currentQuery.involvedRules.map((rule, idx) => (
-                            <div 
-                              key={idx} 
+                            <div
+                              key={idx}
                               className="p-3 rounded-lg bg-purple-500/10 border border-purple-500/30"
                             >
                               <p className="font-medium text-sm">{rule.label}</p>
@@ -376,8 +386,8 @@ export const OntologyPanel = ({
 
           <TabsContent value="history" className="flex-1 min-h-0 mt-3">
             <div className="flex justify-end mb-2">
-              <Button 
-                variant="ghost" 
+              <Button
+                variant="ghost"
                 size="sm"
                 onClick={onClearHistory}
                 disabled={queryHistory.length === 0}
@@ -398,8 +408,8 @@ export const OntologyPanel = ({
               ) : (
                 <div className="space-y-2 pr-4">
                   {[...queryHistory].reverse().map((query, idx) => (
-                    <div 
-                      key={idx} 
+                    <div
+                      key={idx}
                       className="p-3 rounded-lg border bg-card hover:bg-muted/50 transition-colors"
                     >
                       <div className="flex items-center justify-between mb-2">
