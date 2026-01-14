@@ -2,13 +2,16 @@ import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ChessBoard } from '@/components/chess/ChessBoard';
 import { GamePanel } from '@/components/chess/GamePanel';
+import { OntologyPanel } from '@/components/chess/OntologyPanel';
 import { Notification } from '@/components/chess/Notification';
 import { PromotionModal } from '@/components/chess/PromotionModal';
 import { ErrorModal } from '@/components/chess/ErrorModal';
 import { useChessGame } from '@/hooks/useChessGame';
+import { useOntology } from '@/hooks/useOntology';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, BookOpen } from 'lucide-react';
+import { ArrowLeft, BookOpen, Database } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ChessEvent } from '@/lib/ontology-service';
 
 const Game = () => {
   const [searchParams] = useSearchParams();
@@ -25,7 +28,20 @@ const Game = () => {
     toggleTrainingMode,
     removeFeedback,
     dismissModal,
+    lastChessEvent,
   } = useChessGame();
+
+  // Hook pour l'ontologie
+  const {
+    isLoaded: ontologyLoaded,
+    isLoading: ontologyLoading,
+    error: ontologyError,
+    currentQuery,
+    queryHistory,
+    stats: ontologyStats,
+    queryForEvent,
+    clearHistory
+  } = useOntology();
   
   // Enable training mode if URL parameter is set
   useEffect(() => {
@@ -33,6 +49,20 @@ const Game = () => {
       toggleTrainingMode();
     }
   }, [searchParams, gameState.isTrainingMode, toggleTrainingMode]);
+
+  // Déclencher une requête ontologique au démarrage
+  useEffect(() => {
+    if (ontologyLoaded && gameState.moveHistory.length === 0) {
+      queryForEvent({ type: 'game_start' });
+    }
+  }, [ontologyLoaded, gameState.moveHistory.length, queryForEvent]);
+
+  // Exécuter des requêtes ontologiques lors d'événements d'échecs
+  useEffect(() => {
+    if (ontologyLoaded && lastChessEvent) {
+      queryForEvent(lastChessEvent);
+    }
+  }, [ontologyLoaded, lastChessEvent, queryForEvent]);
   
   return (
     <div className="min-h-screen bg-background">
@@ -59,19 +89,32 @@ const Game = () => {
         "container mx-auto px-4 py-6 lg:py-10 transition-opacity duration-300",
         isPaused && "opacity-50 pointer-events-none"
       )}>
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 max-w-6xl mx-auto">
-          {/* Chess Board */}
-          <div className="flex-1 max-w-xl lg:max-w-2xl mx-auto lg:mx-0">
-            <ChessBoard gameState={gameState} onSquareClick={selectSquare} />
-          </div>
-          
-          {/* Game Panel */}
-          <div className="w-full lg:w-80 xl:w-96">
+        <div className="flex flex-col xl:flex-row gap-6 lg:gap-8 max-w-[1600px] mx-auto">
+          {/* Left Column: Game Panel */}
+          <div className="w-full xl:w-80 order-2 xl:order-1">
             <GamePanel
               gameState={gameState}
               onReset={resetGame}
               onUndo={undoMove}
               onToggleTraining={toggleTrainingMode}
+            />
+          </div>
+
+          {/* Center: Chess Board */}
+          <div className="flex-shrink-0 max-w-xl lg:max-w-2xl mx-auto xl:mx-0 order-1 xl:order-2">
+            <ChessBoard gameState={gameState} onSquareClick={selectSquare} />
+          </div>
+          
+          {/* Right Column: Ontology Panel */}
+          <div className="w-full xl:w-96 xl:flex-1 order-3 min-h-[500px] xl:max-w-md">
+            <OntologyPanel
+              isLoaded={ontologyLoaded}
+              isLoading={ontologyLoading}
+              error={ontologyError}
+              currentQuery={currentQuery}
+              queryHistory={queryHistory}
+              stats={ontologyStats}
+              onClearHistory={clearHistory}
             />
           </div>
         </div>

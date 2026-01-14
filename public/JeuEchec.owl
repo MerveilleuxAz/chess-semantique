@@ -1,0 +1,973 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.exemple.org/chess#"
+     xml:base="http://www.exemple.org/chess"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#">
+    
+    <owl:Ontology rdf:about="http://www.exemple.org/chess">
+        <rdfs:comment>Ontologie complete pour un systeme de jeu d echecs avec regles SWRL</rdfs:comment>
+        <rdfs:label>Chess Game Ontology</rdfs:label>
+        <owl:versionInfo>Version 1.0</owl:versionInfo>
+    </owl:Ontology>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes principales
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:Class rdf:about="http://www.exemple.org/chess#Partie">
+        <rdfs:label>Partie</rdfs:label>
+        <rdfs:comment>Une partie d echecs complete</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Plateau">
+        <rdfs:label>Plateau</rdfs:label>
+        <rdfs:comment>Le plateau de jeu 8x8</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Case">
+        <rdfs:label>Case</rdfs:label>
+        <rdfs:comment>Une case du plateau</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Piece">
+        <rdfs:label>Piece</rdfs:label>
+        <rdfs:comment>Une piece d echecs</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Joueur">
+        <rdfs:label>Joueur</rdfs:label>
+        <rdfs:comment>Un joueur participant a la partie</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Coup">
+        <rdfs:label>Coup</rdfs:label>
+        <rdfs:comment>Un coup joue dans la partie</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Tour">
+        <rdfs:label>Tour</rdfs:label>
+        <rdfs:comment>Un tour de jeu</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#EtatPartie">
+        <rdfs:label>Etat de la partie</rdfs:label>
+        <rdfs:comment>L etat actuel de la partie</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Regle">
+        <rdfs:label>Regle</rdfs:label>
+        <rdfs:comment>Une regle du jeu d echecs</rdfs:comment>
+    </owl:Class>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Sous-classes de Pieces
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:Class rdf:about="http://www.exemple.org/chess#Roi">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:label>Roi</rdfs:label>
+        <rdfs:comment>Le roi - piece la plus importante</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Reine">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:label>Reine</rdfs:label>
+        <rdfs:comment>La reine - piece la plus puissante</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#TourPiece">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:label>Tour</rdfs:label>
+        <rdfs:comment>La piece Tour</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Fou">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:label>Fou</rdfs:label>
+        <rdfs:comment>Le fou - se deplace en diagonale</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Cavalier">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:label>Cavalier</rdfs:label>
+        <rdfs:comment>Le cavalier - deplacement en L</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Pion">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:label>Pion</rdfs:label>
+        <rdfs:comment>Le pion - avance d une case</rdfs:comment>
+    </owl:Class>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Sous-classes de Joueur
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:Class rdf:about="http://www.exemple.org/chess#JoueurBlanc">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Joueur"/>
+        <rdfs:label>Joueur Blanc</rdfs:label>
+        <rdfs:comment>Le joueur qui joue les pieces blanches</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#JoueurNoir">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Joueur"/>
+        <rdfs:label>Joueur Noir</rdfs:label>
+        <rdfs:comment>Le joueur qui joue les pieces noires</rdfs:comment>
+    </owl:Class>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Sous-classes de Coup
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:Class rdf:about="http://www.exemple.org/chess#CoupNormal">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:label>Coup Normal</rdfs:label>
+        <rdfs:comment>Un deplacement standard</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Roque">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:label>Roque</rdfs:label>
+        <rdfs:comment>Coup special impliquant roi et tour</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#RoquePetit">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Roque"/>
+        <rdfs:label>Petit Roque</rdfs:label>
+        <rdfs:comment>Roque cote roi</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#RoqueGrand">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Roque"/>
+        <rdfs:label>Grand Roque</rdfs:label>
+        <rdfs:comment>Roque cote dame</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Promotion">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:label>Promotion</rdfs:label>
+        <rdfs:comment>Transformation d un pion arrive en derniere rangee</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#PriseEnPassant">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:label>Prise en Passant</rdfs:label>
+        <rdfs:comment>Capture speciale d un pion par un autre pion</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Capture">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:label>Capture</rdfs:label>
+        <rdfs:comment>Coup qui capture une piece adverse</rdfs:comment>
+    </owl:Class>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Sous-classes d Etat de Partie
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:Class rdf:about="http://www.exemple.org/chess#EnCours">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
+        <rdfs:label>En Cours</rdfs:label>
+        <rdfs:comment>La partie est en cours</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Echec">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
+        <rdfs:label>Echec</rdfs:label>
+        <rdfs:comment>Le roi est menace</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#EchecEtMat">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
+        <rdfs:label>Echec et Mat</rdfs:label>
+        <rdfs:comment>Le roi est en echec sans echappatoire</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Pat">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
+        <rdfs:label>Pat</rdfs:label>
+        <rdfs:comment>Aucun coup legal possible mais le roi n est pas en echec</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Abandon">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
+        <rdfs:label>Abandon</rdfs:label>
+        <rdfs:comment>Un joueur abandonne la partie</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#NullePar50Coups">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
+        <rdfs:label>Nulle par regle des 50 coups</rdfs:label>
+        <rdfs:comment>50 coups sans capture ni mouvement de pion</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#NulleParRepetition">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
+        <rdfs:label>Nulle par repetition</rdfs:label>
+        <rdfs:comment>Meme position repetee 3 fois</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#NulleParAccord">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
+        <rdfs:label>Nulle par accord</rdfs:label>
+        <rdfs:comment>Les deux joueurs acceptent la nulle</rdfs:comment>
+    </owl:Class>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Sous-classes de Case
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <owl:Class rdf:about="http://www.exemple.org/chess#CaseBlanche">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:label>Case Blanche</rdfs:label>
+        <rdfs:comment>Case de couleur claire</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#CaseNoire">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:label>Case Noire</rdfs:label>
+        <rdfs:comment>Case de couleur foncee</rdfs:comment>
+    </owl:Class>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- Proprietes de Partie -->
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#aPlateau">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Partie"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Plateau"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>a pour plateau</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#aJoueurBlanc">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Partie"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#JoueurBlanc"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>a joueur blanc</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#aJoueurNoir">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Partie"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#JoueurNoir"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>a joueur noir</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#aEtat">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Partie"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>a pour etat</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#aTourActuel">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Partie"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Tour"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>a tour actuel</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#aHistoriqueCoup">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Partie"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:label>a historique de coup</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- Proprietes de Plateau -->
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#contientCase">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Plateau"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:label>contient case</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- Proprietes de Case -->
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#contientPiece">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>contient piece</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#estAdjacenteA">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+        <rdfs:label>est adjacente a</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- Proprietes de Piece -->
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#estSurCase">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Case"/>
+        <owl:inverseOf rdf:resource="http://www.exemple.org/chess#contientPiece"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>est sur case</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#appartientA">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Joueur"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>appartient a</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#menacePiece">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:label>menace piece</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#peutAtteindreCase">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:label>peut atteindre case</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- Proprietes de Joueur -->
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#possedePiece">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Joueur"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <owl:inverseOf rdf:resource="http://www.exemple.org/chess#appartientA"/>
+        <rdfs:label>possede piece</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#effectueCoup">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Joueur"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:label>effectue coup</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#aRoi">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Joueur"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Roi"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>a pour roi</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- Proprietes de Coup -->
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#deplacePiece">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>deplace piece</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#caseDepart">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>case de depart</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#caseArrivee">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>case d arrivee</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#capturePiece">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:label>capture piece</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#promeutEn">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Promotion"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:label>promu en</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- Proprietes de Tour -->
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#joueurActif">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Tour"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Joueur"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>joueur actif</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#tourSuivant">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Tour"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Tour"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:label>tour suivant</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.exemple.org/chess#coupJoue">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Tour"/>
+        <rdfs:range rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:label>coup joue</rdfs:label>
+    </owl:ObjectProperty>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- Proprietes de Partie -->
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#idPartie">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Partie"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>identifiant partie</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#dateDebut">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Partie"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:label>date de debut</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#dateFin">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Partie"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:label>date de fin</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- Proprietes de Case -->
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#coord">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>coordonnees</rdfs:label>
+        <rdfs:comment>Format: a1, b2, e4, etc.</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#rangee">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label>rangee</rdfs:label>
+        <rdfs:comment>Numero de rangee (1-8)</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#colonne">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label>colonne</rdfs:label>
+        <rdfs:comment>Numero de colonne (1-8 pour a-h)</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <!-- Proprietes de Piece -->
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#couleur">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>couleur</rdfs:label>
+        <rdfs:comment>Valeurs: blanc ou noir</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#aBouge">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label>a deja bouge</rdfs:label>
+        <rdfs:comment>Important pour roque et premiere avancee du pion</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#estCapturee">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label>est capturee</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#valeur">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Piece"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label>valeur</rdfs:label>
+        <rdfs:comment>Valeur materielle de la piece</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <!-- Proprietes de Tour -->
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#numeroTour">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Tour"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label>numero de tour</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <!-- Proprietes de Coup -->
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#typeCoup">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>type de coup</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#estValide">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label>est valide</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#notation">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>notation algebrique</rdfs:label>
+        <rdfs:comment>Notation standard</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <!-- Proprietes de Joueur -->
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#nomJoueur">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Joueur"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label>nom du joueur</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.exemple.org/chess#elo">
+        <rdfs:domain rdf:resource="http://www.exemple.org/chess#Joueur"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label>classement Elo</rdfs:label>
+    </owl:DatatypeProperty>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // INDIVIDUS EXEMPLES
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- Exemple de Partie -->
+    <Partie rdf:about="http://www.exemple.org/chess#Partie001">
+        <idPartie>PARTIE-001</idPartie>
+        <dateDebut rdf:datatype="http://www.w3.org/2001/XMLSchema#dateTime">2025-01-15T14:30:00</dateDebut>
+        <rdfs:label>Partie Example 001</rdfs:label>
+    </Partie>
+
+    <!-- Exemple de Joueurs -->
+    <JoueurBlanc rdf:about="http://www.exemple.org/chess#JoueurAlice">
+        <nomJoueur>Alice</nomJoueur>
+        <elo rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1800</elo>
+        <rdfs:label>Joueur Alice Blanc</rdfs:label>
+    </JoueurBlanc>
+
+    <JoueurNoir rdf:about="http://www.exemple.org/chess#JoueurBob">
+        <nomJoueur>Bob</nomJoueur>
+        <elo rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1750</elo>
+        <rdfs:label>Joueur Bob Noir</rdfs:label>
+    </JoueurNoir>
+
+    <!-- Lier les joueurs a la partie -->
+    <rdf:Description rdf:about="http://www.exemple.org/chess#Partie001">
+        <aJoueurBlanc rdf:resource="http://www.exemple.org/chess#JoueurAlice"/>
+        <aJoueurNoir rdf:resource="http://www.exemple.org/chess#JoueurBob"/>
+    </rdf:Description>
+
+    <!-- Exemple de Plateau -->
+    <Plateau rdf:about="http://www.exemple.org/chess#PlateauStandard">
+        <rdfs:label>Plateau Standard 8x8</rdfs:label>
+    </Plateau>
+
+    <rdf:Description rdf:about="http://www.exemple.org/chess#Partie001">
+        <aPlateau rdf:resource="http://www.exemple.org/chess#PlateauStandard"/>
+        <aEtat>
+            <EnCours rdf:about="http://www.exemple.org/chess#EtatEnCours001"/>
+        </aEtat>
+    </rdf:Description>
+
+    <!-- Exemples de Cases -->
+    <Case rdf:about="http://www.exemple.org/chess#Case_e4">
+        <coord>e4</coord>
+        <rangee rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</rangee>
+        <colonne rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</colonne>
+        <rdfs:label>Case e4</rdfs:label>
+    </Case>
+
+    <Case rdf:about="http://www.exemple.org/chess#Case_e2">
+        <coord>e2</coord>
+        <rangee rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</rangee>
+        <colonne rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</colonne>
+        <rdfs:label>Case e2</rdfs:label>
+    </Case>
+
+    <Case rdf:about="http://www.exemple.org/chess#Case_e1">
+        <coord>e1</coord>
+        <rangee rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</rangee>
+        <colonne rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</colonne>
+        <rdfs:label>Case e1</rdfs:label>
+    </Case>
+
+    <!-- Exemples de Pieces -->
+    <Roi rdf:about="http://www.exemple.org/chess#RoiBlanc">
+        <couleur>blanc</couleur>
+        <aBouge rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</aBouge>
+        <estCapturee rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</estCapturee>
+        <estSurCase rdf:resource="http://www.exemple.org/chess#Case_e1"/>
+        <appartientA rdf:resource="http://www.exemple.org/chess#JoueurAlice"/>
+        <rdfs:label>Roi Blanc</rdfs:label>
+    </Roi>
+
+    <Pion rdf:about="http://www.exemple.org/chess#PionBlanc_e2">
+        <couleur>blanc</couleur>
+        <aBouge rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</aBouge>
+        <estCapturee rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</estCapturee>
+        <valeur rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</valeur>
+        <estSurCase rdf:resource="http://www.exemple.org/chess#Case_e2"/>
+        <appartientA rdf:resource="http://www.exemple.org/chess#JoueurAlice"/>
+        <rdfs:label>Pion Blanc en e2</rdfs:label>
+    </Pion>
+
+    <!-- Exemple de Coup -->
+    <CoupNormal rdf:about="http://www.exemple.org/chess#Coup001">
+        <notation>e4</notation>
+        <typeCoup>avancee de pion</typeCoup>
+        <estValide rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</estValide>
+        <deplacePiece rdf:resource="http://www.exemple.org/chess#PionBlanc_e2"/>
+        <caseDepart rdf:resource="http://www.exemple.org/chess#Case_e2"/>
+        <caseArrivee rdf:resource="http://www.exemple.org/chess#Case_e4"/>
+        <rdfs:label>Coup e2-e4</rdfs:label>
+    </CoupNormal>
+
+    <!-- Exemple de Tour de jeu -->
+    <Tour rdf:about="http://www.exemple.org/chess#Tour001">
+        <numeroTour rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</numeroTour>
+        <joueurActif rdf:resource="http://www.exemple.org/chess#JoueurAlice"/>
+        <coupJoue rdf:resource="http://www.exemple.org/chess#Coup001"/>
+        <rdfs:label>Tour 1 - Blanc</rdfs:label>
+    </Tour>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // REGLES SWRL
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    <!-- REGLE 1: Detection de l'echec -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <rdfs:label>Regle Echec</rdfs:label>
+        <rdfs:comment>Un roi est en echec si une piece adverse peut atteindre sa case</rdfs:comment>
+        <swrl:body rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Roi"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#roi"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#estSurCase"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#roi"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#caseRoi"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Piece"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#pieceAdverse"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#peutAtteindreCase"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#pieceAdverse"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#caseRoi"/>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Echec"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#etat"/>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- REGLE 2: Detection de capture -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <rdfs:label>Regle Capture</rdfs:label>
+        <rdfs:comment>Si un coup deplace une piece vers une case occupee par une piece adverse, c'est une capture</rdfs:comment>
+        <swrl:body rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Coup"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#caseArrivee"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#caseDest"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#contientPiece"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#caseDest"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#pieceCapturee"/>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Capture"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#capturePiece"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#pieceCapturee"/>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- REGLE 3: Promotion du pion blanc -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <rdfs:label>Regle Promotion Pion Blanc</rdfs:label>
+        <rdfs:comment>Un pion blanc qui atteint la rangee 8 doit etre promu</rdfs:comment>
+        <swrl:body rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Pion"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#pion"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#couleur"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#pion"/>
+                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">blanc</swrl:argument2>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#estSurCase"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#pion"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#case"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#rangee"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#case"/>
+                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</swrl:argument2>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Promotion"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- REGLE 4: Promotion du pion noir -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <rdfs:label>Regle Promotion Pion Noir</rdfs:label>
+        <rdfs:comment>Un pion noir qui atteint la rangee 1 doit etre promu</rdfs:comment>
+        <swrl:body rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Pion"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#pion"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#couleur"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#pion"/>
+                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">noir</swrl:argument2>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#estSurCase"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#pion"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#case"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#rangee"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#case"/>
+                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</swrl:argument2>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Promotion"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- REGLE 5: Validation du roque -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <rdfs:label>Regle Roque Valide</rdfs:label>
+        <rdfs:comment>Le roque est valide si le roi et la tour n'ont jamais bouge</rdfs:comment>
+        <swrl:body rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Roque"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Roi"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#roi"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#TourPiece"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#tour"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#aBouge"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#roi"/>
+                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</swrl:argument2>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#aBouge"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#tour"/>
+                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</swrl:argument2>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#estValide"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrl:argument2>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- REGLE 6: Marquer une piece comme ayant bouge -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <rdfs:label>Regle Piece a Bouge</rdfs:label>
+        <rdfs:comment>Apres qu'une piece a ete deplacee par un coup, elle est marquee comme ayant bouge</rdfs:comment>
+        <swrl:body rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Coup"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#deplacePiece"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#piece"/>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#aBouge"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#piece"/>
+                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrl:argument2>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- REGLE 7: Piece capturee -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <rdfs:label>Regle Piece Capturee</rdfs:label>
+        <rdfs:comment>Une piece capturee est marquee comme capturee</rdfs:comment>
+        <swrl:body rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Coup"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#capturePiece"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#coup"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#piece"/>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#estCapturee"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#piece"/>
+                <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrl:argument2>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- REGLE 8: Menace entre pieces -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <rdfs:label>Regle Menace</rdfs:label>
+        <rdfs:comment>Une piece menace une autre si elle peut atteindre sa case</rdfs:comment>
+        <swrl:body rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Piece"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#piece1"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                <swrl:classPredicate rdf:resource="http://www.exemple.org/chess#Piece"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#piece2"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#estSurCase"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#piece2"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#case"/>
+            </rdf:Description>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#peutAtteindreCase"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#piece1"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#case"/>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head rdf:parseType="Collection">
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                <swrl:propertyPredicate rdf:resource="http://www.exemple.org/chess#menacePiece"/>
+                <swrl:argument1 rdf:resource="urn:swrl:var#piece1"/>
+                <swrl:argument2 rdf:resource="urn:swrl:var#piece2"/>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+</rdf:RDF>

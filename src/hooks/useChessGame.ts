@@ -18,6 +18,14 @@ import {
   getWrongColorError,
   getNoLegalMovesError
 } from '@/lib/move-explanations';
+import { ChessEvent } from '@/lib/ontology-service';
+
+// Fonction pour convertir une position en notation algébrique
+const positionToNotation = (pos: Position): string => {
+  const col = String.fromCharCode(97 + pos.col); // 0-7 -> a-h
+  const row = (8 - pos.row).toString(); // 0-7 -> 8-1
+  return col + row;
+};
 
 export const useChessGame = () => {
   const [gameState, setGameState] = useState<GameState>(createInitialGameState());
@@ -25,6 +33,7 @@ export const useChessGame = () => {
   const [modalFeedback, setModalFeedback] = useState<FeedbackMessage | null>(null);
   const [isPaused, setIsPaused] = useState(false);
   const [promotionPending, setPromotionPending] = useState<Position | null>(null);
+  const [lastChessEvent, setLastChessEvent] = useState<ChessEvent | null>(null);
 
   const addFeedback = useCallback((message: Omit<FeedbackMessage, 'id'>, showInModal = false) => {
     const id = Date.now().toString();
@@ -97,6 +106,29 @@ export const useChessGame = () => {
             captured: capturedPiece ?? undefined,
             notation,
           };
+          
+          // Émettre l'événement ontologique pour le déplacement ou la capture
+          const fromNotation = positionToNotation(prev.selectedPosition);
+          const toNotation = positionToNotation(position);
+          
+          if (capturedPiece) {
+            setLastChessEvent({
+              type: 'capture',
+              piece: movingPiece.type,
+              pieceColor: movingPiece.color,
+              from: fromNotation,
+              to: toNotation,
+              capturedPiece: capturedPiece.type
+            });
+          } else {
+            setLastChessEvent({
+              type: 'move',
+              piece: movingPiece.type,
+              pieceColor: movingPiece.color,
+              from: fromNotation,
+              to: toNotation
+            });
+          }
           
           // Show training hint if in training mode
           if (prev.isTrainingMode) {
@@ -188,6 +220,14 @@ export const useChessGame = () => {
         
         const legalMoves = calculateLegalMoves(prev.board, position, prev.currentPlayer);
         
+        // Émettre l'événement ontologique pour la sélection de pièce
+        setLastChessEvent({
+          type: 'piece_select',
+          piece: piece.type,
+          pieceColor: piece.color,
+          from: positionToNotation(position)
+        });
+        
         if (legalMoves.length === 0) {
           const pieceNames: Record<PieceType, string> = {
             king: 'Le Roi',
@@ -220,6 +260,16 @@ export const useChessGame = () => {
 
   const promotePawn = useCallback((pieceType: 'queen' | 'rook' | 'bishop' | 'knight') => {
     if (!promotionPending || !gameState.selectedPosition) return;
+    
+    // Émettre l'événement ontologique pour la promotion
+    setLastChessEvent({
+      type: 'promotion',
+      piece: 'pawn',
+      pieceColor: gameState.currentPlayer,
+      from: positionToNotation(gameState.selectedPosition),
+      to: positionToNotation(promotionPending),
+      promotionPiece: pieceType
+    });
     
     setGameState(prev => {
       const movingPiece = prev.board[prev.selectedPosition!.row][prev.selectedPosition!.col]!;
@@ -268,12 +318,13 @@ export const useChessGame = () => {
     });
     
     setPromotionPending(null);
-  }, [promotionPending, gameState.selectedPosition, addFeedback]);
+  }, [promotionPending, gameState.selectedPosition, gameState.currentPlayer, addFeedback]);
 
   const resetGame = useCallback(() => {
     setGameState(createInitialGameState());
     setFeedback([]);
     setPromotionPending(null);
+    setLastChessEvent({ type: 'game_start' });
     addFeedback({
       type: 'info',
       message: 'Nouvelle partie. Les Blancs commencent.',
@@ -352,5 +403,6 @@ export const useChessGame = () => {
     toggleTrainingMode,
     removeFeedback,
     dismissModal,
+    lastChessEvent,
   };
 };
