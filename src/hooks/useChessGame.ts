@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { 
   GameState, 
   Position, 
@@ -11,7 +11,13 @@ import {
   createInitialGameState, 
   calculateLegalMoves, 
   createMoveNotation,
-  getTrainingHint
+  getTrainingHint,
+  executeMove,
+  updateCastlingRights,
+  getGameEndState,
+  isKingInCheck,
+  findKingPosition,
+  detectSpecialMove
 } from '@/lib/chess-utils';
 import {
   getIllegalDestinationError,
@@ -63,6 +69,11 @@ export const useChessGame = () => {
     // Don't allow moves when game is paused
     if (isPaused) return;
     setGameState(prev => {
+      // Ne pas permettre de jouer si la partie est finie
+      if (prev.gameStatus === 'checkmate' || prev.gameStatus === 'stalemate' || prev.gameStatus === 'draw') {
+        return prev;
+      }
+      
       const piece = prev.board[position.row][position.col];
       
       // If a piece is already selected
@@ -74,7 +85,6 @@ export const useChessGame = () => {
         if (isLegalMove) {
           // Make the move
           const movingPiece = prev.board[prev.selectedPosition.row][prev.selectedPosition.col]!;
-          const capturedPiece = prev.board[position.row][position.col];
           
           // Check for pawn promotion
           if (movingPiece.type === 'pawn' && 
@@ -88,30 +98,86 @@ export const useChessGame = () => {
             };
           }
           
-          const newBoard = prev.board.map(row => [...row]);
-          newBoard[position.row][position.col] = movingPiece;
-          newBoard[prev.selectedPosition.row][prev.selectedPosition.col] = null;
+          // Exécuter le coup avec la nouvelle logique
+          const { newBoard, capturedPiece, newEnPassantTarget, specialMove } = executeMove(
+            prev.board,
+            prev.selectedPosition,
+            position,
+            prev.enPassantTarget
+          );
           
+          // Mettre à jour les droits de roque
+          const newCastlingRights = updateCastlingRights(prev.castlingRights, movingPiece, prev.selectedPosition);
+          
+          // Vérifier l'état de la partie pour le prochain joueur
+          const nextPlayer = prev.currentPlayer === 'white' ? 'black' : 'white';
+          const gameEndState = getGameEndState(newBoard, nextPlayer, newEnPassantTarget, newCastlingRights);
+          
+          // Trouver la position du roi si en échec
+          let kingInCheckPos: Position | null = null;
+          if (gameEndState === 'check' || gameEndState === 'checkmate') {
+            kingInCheckPos = findKingPosition(newBoard, nextPlayer);
+          }
+          
+          // Créer la notation
           const notation = createMoveNotation(
             movingPiece,
             prev.selectedPosition,
             position,
-            capturedPiece ?? undefined
+            capturedPiece,
+            specialMove,
+            gameEndState === 'check',
+            gameEndState === 'checkmate'
           );
           
           const move: Move = {
             from: prev.selectedPosition,
             to: position,
             piece: movingPiece,
-            captured: capturedPiece ?? undefined,
+            captured: capturedPiece,
             notation,
+            specialMove,
           };
           
-          // Émettre l'événement ontologique pour le déplacement ou la capture
+          // Émettre l'événement ontologique
           const fromNotation = positionToNotation(prev.selectedPosition);
           const toNotation = positionToNotation(position);
           
-          if (capturedPiece) {
+          if (specialMove === 'castle_kingside' || specialMove === 'castle_queenside') {
+            setLastChessEvent({
+              type: 'castling',
+              piece: 'king',
+              pieceColor: movingPiece.color,
+              from: fromNotation,
+              to: toNotation,
+              castlingSide: specialMove === 'castle_kingside' ? 'kingside' : 'queenside'
+            });
+          } else if (gameEndState === 'checkmate') {
+            setLastChessEvent({
+              type: 'checkmate',
+              piece: movingPiece.type,
+              pieceColor: movingPiece.color,
+              from: fromNotation,
+              to: toNotation,
+              winner: movingPiece.color
+            });
+          } else if (gameEndState === 'check') {
+            setLastChessEvent({
+              type: 'check',
+              piece: movingPiece.type,
+              pieceColor: movingPiece.color,
+              from: fromNotation,
+              to: toNotation
+            });
+          } else if (gameEndState === 'stalemate') {
+            setLastChessEvent({
+              type: 'stalemate',
+              piece: movingPiece.type,
+              pieceColor: movingPiece.color,
+              from: fromNotation,
+              to: toNotation
+            });
+          } else if (capturedPiece) {
             setLastChessEvent({
               type: 'capture',
               piece: movingPiece.type,
@@ -140,7 +206,26 @@ export const useChessGame = () => {
             });
           }
           
-          if (capturedPiece) {
+          // Feedbacks pour les événements spéciaux
+          if (specialMove === 'castle_kingside') {
+            addFeedback({
+              type: 'success',
+              message: 'Petit roque effectué !',
+              icon: '🏰',
+            });
+          } else if (specialMove === 'castle_queenside') {
+            addFeedback({
+              type: 'success',
+              message: 'Grand roque effectué !',
+              icon: '🏰',
+            });
+          } else if (specialMove === 'en_passant') {
+            addFeedback({
+              type: 'success',
+              message: 'Prise en passant !',
+              icon: '⚔️',
+            });
+          } else if (capturedPiece) {
             const pieceNamesFr: Record<string, string> = {
               king: 'Roi', queen: 'Dame', rook: 'Tour',
               bishop: 'Fou', knight: 'Cavalier', pawn: 'Pion',
@@ -153,17 +238,50 @@ export const useChessGame = () => {
             });
           }
           
+          // Feedback pour l'état de la partie
+          if (gameEndState === 'checkmate') {
+            const winnerFr = prev.currentPlayer === 'white' ? 'Blancs' : 'Noirs';
+            addFeedback({
+              type: 'success',
+              message: `Échec et mat ! Les ${winnerFr} gagnent !`,
+              icon: '🏆',
+            }, true);
+          } else if (gameEndState === 'stalemate') {
+            addFeedback({
+              type: 'info',
+              message: 'Pat ! La partie est nulle.',
+              icon: '🤝',
+            }, true);
+          } else if (gameEndState === 'check') {
+            const checkedPlayer = nextPlayer === 'white' ? 'blanc' : 'noir';
+            addFeedback({
+              type: 'warning',
+              message: `Échec au roi ${checkedPlayer} !`,
+              icon: '⚠️',
+            });
+          }
+          
           return {
             ...prev,
             board: newBoard,
-            currentPlayer: prev.currentPlayer === 'white' ? 'black' : 'white',
+            currentPlayer: nextPlayer,
             selectedPosition: null,
             legalMoves: [],
             moveHistory: [...prev.moveHistory, move],
+            gameStatus: gameEndState === 'playing' ? 'playing' : gameEndState,
+            kingInCheck: kingInCheckPos,
+            enPassantTarget: newEnPassantTarget,
+            castlingRights: newCastlingRights,
           };
         } else if (piece && piece.color === prev.currentPlayer) {
           // Select a different piece
-          const legalMoves = calculateLegalMoves(prev.board, position, prev.currentPlayer);
+          const legalMoves = calculateLegalMoves(
+            prev.board, 
+            position, 
+            prev.currentPlayer,
+            prev.enPassantTarget,
+            prev.castlingRights
+          );
           return {
             ...prev,
             selectedPosition: position,
@@ -218,7 +336,13 @@ export const useChessGame = () => {
           return prev;
         }
         
-        const legalMoves = calculateLegalMoves(prev.board, position, prev.currentPlayer);
+        const legalMoves = calculateLegalMoves(
+          prev.board, 
+          position, 
+          prev.currentPlayer,
+          prev.enPassantTarget,
+          prev.castlingRights
+        );
         
         // Émettre l'événement ontologique pour la sélection de pièce
         setLastChessEvent({
@@ -275,27 +399,50 @@ export const useChessGame = () => {
       const movingPiece = prev.board[prev.selectedPosition!.row][prev.selectedPosition!.col]!;
       const capturedPiece = prev.board[promotionPending.row][promotionPending.col];
       
-      const newBoard = prev.board.map(row => [...row]);
-      const promotedPiece: ChessPiece = {
-        type: pieceType,
-        color: movingPiece.color,
-      };
-      newBoard[promotionPending.row][promotionPending.col] = promotedPiece;
-      newBoard[prev.selectedPosition!.row][prev.selectedPosition!.col] = null;
+      // Exécuter le coup de promotion
+      const { newBoard, newEnPassantTarget } = executeMove(
+        prev.board,
+        prev.selectedPosition!,
+        promotionPending,
+        prev.enPassantTarget,
+        pieceType
+      );
+      
+      // Mettre à jour les droits de roque
+      const newCastlingRights = updateCastlingRights(prev.castlingRights, movingPiece, prev.selectedPosition!);
+      
+      // Vérifier l'état de la partie
+      const nextPlayer = prev.currentPlayer === 'white' ? 'black' : 'white';
+      const gameEndState = getGameEndState(newBoard, nextPlayer, newEnPassantTarget, newCastlingRights);
+      
+      let kingInCheckPos: Position | null = null;
+      if (gameEndState === 'check' || gameEndState === 'checkmate') {
+        kingInCheckPos = findKingPosition(newBoard, nextPlayer);
+      }
       
       const notation = createMoveNotation(
         movingPiece,
         prev.selectedPosition!,
         promotionPending,
-        capturedPiece ?? undefined
+        capturedPiece,
+        'promotion',
+        gameEndState === 'check',
+        gameEndState === 'checkmate'
       ) + '=' + pieceType[0].toUpperCase();
+      
+      const promotedPiece: ChessPiece = {
+        type: pieceType,
+        color: movingPiece.color,
+        hasMoved: true,
+      };
       
       const move: Move = {
         from: prev.selectedPosition!,
         to: promotionPending,
         piece: promotedPiece,
-        captured: capturedPiece ?? undefined,
+        captured: capturedPiece,
         notation,
+        specialMove: 'promotion',
       };
       
       const pieceNamesFr: Record<string, string> = {
@@ -307,13 +454,34 @@ export const useChessGame = () => {
         icon: '👑',
       });
       
+      // Feedback pour l'état de la partie
+      if (gameEndState === 'checkmate') {
+        const winnerFr = prev.currentPlayer === 'white' ? 'Blancs' : 'Noirs';
+        addFeedback({
+          type: 'success',
+          message: `Échec et mat ! Les ${winnerFr} gagnent !`,
+          icon: '🏆',
+        }, true);
+      } else if (gameEndState === 'check') {
+        const checkedPlayer = nextPlayer === 'white' ? 'blanc' : 'noir';
+        addFeedback({
+          type: 'warning',
+          message: `Échec au roi ${checkedPlayer} !`,
+          icon: '⚠️',
+        });
+      }
+      
       return {
         ...prev,
         board: newBoard,
-        currentPlayer: prev.currentPlayer === 'white' ? 'black' : 'white',
+        currentPlayer: nextPlayer,
         selectedPosition: null,
         legalMoves: [],
         moveHistory: [...prev.moveHistory, move],
+        gameStatus: gameEndState === 'playing' ? 'playing' : gameEndState,
+        kingInCheck: kingInCheckPos,
+        enPassantTarget: newEnPassantTarget,
+        castlingRights: newCastlingRights,
       };
     });
     

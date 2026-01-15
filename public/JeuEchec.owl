@@ -10,9 +10,9 @@
      xmlns:swrlb="http://www.w3.org/2003/11/swrlb#">
     
     <owl:Ontology rdf:about="http://www.exemple.org/chess">
-        <rdfs:comment>Ontologie complete pour un systeme de jeu d echecs avec regles SWRL</rdfs:comment>
+        <rdfs:comment>Ontologie complete pour un systeme de jeu d echecs avec regles SWRL - Version 2.0 avec gestion complete des coups illegaux et fins de partie</rdfs:comment>
         <rdfs:label>Chess Game Ontology</rdfs:label>
-        <owl:versionInfo>Version 1.0</owl:versionInfo>
+        <owl:versionInfo>Version 2.0</owl:versionInfo>
     </owl:Ontology>
 
 
@@ -54,6 +54,18 @@
         <rdfs:comment>Un coup joue dans la partie</rdfs:comment>
     </owl:Class>
     
+    <owl:Class rdf:about="http://www.exemple.org/chess#CoupLegal">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:label>Coup Legal</rdfs:label>
+        <rdfs:comment>Un coup qui respecte toutes les regles du jeu</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#CoupIllegal">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:label>Coup Illegal</rdfs:label>
+        <rdfs:comment>Un coup qui viole les regles du jeu</rdfs:comment>
+    </owl:Class>
+    
     <owl:Class rdf:about="http://www.exemple.org/chess#Tour">
         <rdfs:label>Tour</rdfs:label>
         <rdfs:comment>Un tour de jeu</rdfs:comment>
@@ -68,6 +80,24 @@
         <rdfs:label>Regle</rdfs:label>
         <rdfs:comment>Une regle du jeu d echecs</rdfs:comment>
     </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#RegleDeplacementPiece">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Regle"/>
+        <rdfs:label>Regle de Deplacement</rdfs:label>
+        <rdfs:comment>Regle definissant comment une piece peut se deplacer</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#RegleCoupSpecial">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Regle"/>
+        <rdfs:label>Regle de Coup Special</rdfs:label>
+        <rdfs:comment>Regle pour les coups speciaux comme le roque ou la prise en passant</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#RegleFinPartie">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Regle"/>
+        <rdfs:label>Regle de Fin de Partie</rdfs:label>
+        <rdfs:comment>Regle determinant la fin de la partie</rdfs:comment>
+    </owl:Class>
 
 
     <!-- 
@@ -81,37 +111,37 @@
     <owl:Class rdf:about="http://www.exemple.org/chess#Roi">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
         <rdfs:label>Roi</rdfs:label>
-        <rdfs:comment>Le roi - piece la plus importante</rdfs:comment>
+        <rdfs:comment>Le roi - piece la plus importante. Se deplace d une case dans toutes les directions. Ne peut pas se mettre en echec.</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#Reine">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
         <rdfs:label>Reine</rdfs:label>
-        <rdfs:comment>La reine - piece la plus puissante</rdfs:comment>
+        <rdfs:comment>La reine - piece la plus puissante. Combine les mouvements de la tour et du fou.</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#TourPiece">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
         <rdfs:label>Tour</rdfs:label>
-        <rdfs:comment>La piece Tour</rdfs:comment>
+        <rdfs:comment>La piece Tour - se deplace horizontalement et verticalement</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#Fou">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
         <rdfs:label>Fou</rdfs:label>
-        <rdfs:comment>Le fou - se deplace en diagonale</rdfs:comment>
+        <rdfs:comment>Le fou - se deplace en diagonale uniquement</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#Cavalier">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
         <rdfs:label>Cavalier</rdfs:label>
-        <rdfs:comment>Le cavalier - deplacement en L</rdfs:comment>
+        <rdfs:comment>Le cavalier - deplacement en L, peut sauter par-dessus les autres pieces</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#Pion">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Piece"/>
         <rdfs:label>Pion</rdfs:label>
-        <rdfs:comment>Le pion - avance d une case</rdfs:comment>
+        <rdfs:comment>Le pion - avance d une case (ou deux depuis sa position initiale), capture en diagonale</rdfs:comment>
     </owl:Class>
 
 
@@ -126,7 +156,7 @@
     <owl:Class rdf:about="http://www.exemple.org/chess#JoueurBlanc">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Joueur"/>
         <rdfs:label>Joueur Blanc</rdfs:label>
-        <rdfs:comment>Le joueur qui joue les pieces blanches</rdfs:comment>
+        <rdfs:comment>Le joueur qui joue les pieces blanches - commence toujours la partie</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#JoueurNoir">
@@ -145,45 +175,70 @@
      -->
 
     <owl:Class rdf:about="http://www.exemple.org/chess#CoupNormal">
-        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#CoupLegal"/>
         <rdfs:label>Coup Normal</rdfs:label>
-        <rdfs:comment>Un deplacement standard</rdfs:comment>
+        <rdfs:comment>Un deplacement standard d une piece</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#Roque">
-        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#CoupLegal"/>
         <rdfs:label>Roque</rdfs:label>
-        <rdfs:comment>Coup special impliquant roi et tour</rdfs:comment>
+        <rdfs:comment>Coup special impliquant roi et tour. Conditions: ni le roi ni la tour n ont bouge, pas de pieces entre eux, le roi ne traverse pas de case attaquee</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#RoquePetit">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Roque"/>
         <rdfs:label>Petit Roque</rdfs:label>
-        <rdfs:comment>Roque cote roi</rdfs:comment>
+        <rdfs:comment>Roque cote roi (O-O). Le roi va en g1/g8, la tour en f1/f8</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#RoqueGrand">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Roque"/>
         <rdfs:label>Grand Roque</rdfs:label>
-        <rdfs:comment>Roque cote dame</rdfs:comment>
+        <rdfs:comment>Roque cote dame (O-O-O). Le roi va en c1/c8, la tour en d1/d8</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#Promotion">
-        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#CoupLegal"/>
         <rdfs:label>Promotion</rdfs:label>
-        <rdfs:comment>Transformation d un pion arrive en derniere rangee</rdfs:comment>
+        <rdfs:comment>Transformation d un pion arrive en derniere rangee en Dame, Tour, Fou ou Cavalier</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#PriseEnPassant">
-        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#CoupLegal"/>
         <rdfs:label>Prise en Passant</rdfs:label>
-        <rdfs:comment>Capture speciale d un pion par un autre pion</rdfs:comment>
+        <rdfs:comment>Capture speciale: un pion peut capturer un pion adverse qui vient d avancer de deux cases et se trouve a cote de lui</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#Capture">
-        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Coup"/>
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#CoupLegal"/>
         <rdfs:label>Capture</rdfs:label>
         <rdfs:comment>Coup qui capture une piece adverse</rdfs:comment>
+    </owl:Class>
+    
+    <!-- Types de coups illegaux -->
+    <owl:Class rdf:about="http://www.exemple.org/chess#CoupLaisseRoiEnEchec">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#CoupIllegal"/>
+        <rdfs:label>Coup Laissant Roi en Echec</rdfs:label>
+        <rdfs:comment>Coup illegal car il laisse ou met son propre roi en echec</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#CoupHorsPortee">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#CoupIllegal"/>
+        <rdfs:label>Coup Hors Portee</rdfs:label>
+        <rdfs:comment>Coup illegal car la destination n est pas atteignable par cette piece</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#CoupCheminBloque">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#CoupIllegal"/>
+        <rdfs:label>Coup Chemin Bloque</rdfs:label>
+        <rdfs:comment>Coup illegal car une piece bloque le chemin (sauf cavalier)</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#CoupSurPieceAlliee">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#CoupIllegal"/>
+        <rdfs:label>Coup sur Piece Alliee</rdfs:label>
+        <rdfs:comment>Coup illegal car on ne peut pas capturer ses propres pieces</rdfs:comment>
     </owl:Class>
 
 
@@ -198,49 +253,55 @@
     <owl:Class rdf:about="http://www.exemple.org/chess#EnCours">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
         <rdfs:label>En Cours</rdfs:label>
-        <rdfs:comment>La partie est en cours</rdfs:comment>
+        <rdfs:comment>La partie est en cours normalement</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#Echec">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
         <rdfs:label>Echec</rdfs:label>
-        <rdfs:comment>Le roi est menace</rdfs:comment>
+        <rdfs:comment>Le roi est menace par une piece adverse. Le joueur DOIT parer l echec: capturer la piece menacante, bloquer avec une piece, ou deplacer le roi</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#EchecEtMat">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
         <rdfs:label>Echec et Mat</rdfs:label>
-        <rdfs:comment>Le roi est en echec sans echappatoire</rdfs:comment>
+        <rdfs:comment>Le roi est en echec et aucun coup legal ne peut parer l echec. Fin de partie, le joueur en echec perd</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#Pat">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
         <rdfs:label>Pat</rdfs:label>
-        <rdfs:comment>Aucun coup legal possible mais le roi n est pas en echec</rdfs:comment>
+        <rdfs:comment>Le joueur n a aucun coup legal mais son roi n est pas en echec. Partie nulle</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#Abandon">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
         <rdfs:label>Abandon</rdfs:label>
-        <rdfs:comment>Un joueur abandonne la partie</rdfs:comment>
+        <rdfs:comment>Un joueur abandonne volontairement la partie</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#NullePar50Coups">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
         <rdfs:label>Nulle par regle des 50 coups</rdfs:label>
-        <rdfs:comment>50 coups sans capture ni mouvement de pion</rdfs:comment>
+        <rdfs:comment>50 coups consecutifs sans capture ni mouvement de pion - partie nulle</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#NulleParRepetition">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
         <rdfs:label>Nulle par repetition</rdfs:label>
-        <rdfs:comment>Meme position repetee 3 fois</rdfs:comment>
+        <rdfs:comment>Meme position repetee 3 fois avec le meme joueur au trait - partie nulle</rdfs:comment>
     </owl:Class>
     
     <owl:Class rdf:about="http://www.exemple.org/chess#NulleParAccord">
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
         <rdfs:label>Nulle par accord</rdfs:label>
         <rdfs:comment>Les deux joueurs acceptent la nulle</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#NulleParMaterielInsuffisant">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#EtatPartie"/>
+        <rdfs:label>Nulle par materiel insuffisant</rdfs:label>
+        <rdfs:comment>Aucun joueur n a assez de materiel pour mater (ex: Roi vs Roi, Roi+Cavalier vs Roi)</rdfs:comment>
     </owl:Class>
 
 
@@ -262,6 +323,56 @@
         <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Case"/>
         <rdfs:label>Case Noire</rdfs:label>
         <rdfs:comment>Case de couleur foncee</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#CaseMenacee">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:label>Case Menacee</rdfs:label>
+        <rdfs:comment>Case controlee/attaquee par au moins une piece adverse</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#CaseProtegee">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Case"/>
+        <rdfs:label>Case Protegee</rdfs:label>
+        <rdfs:comment>Case defendue par au moins une piece alliee</rdfs:comment>
+    </owl:Class>
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes pour les contraintes de coup en echec
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#ReponseEchec">
+        <rdfs:label>Reponse a l Echec</rdfs:label>
+        <rdfs:comment>Action permettant de parer un echec</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#CaptureAttaquant">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#ReponseEchec"/>
+        <rdfs:label>Capture de l Attaquant</rdfs:label>
+        <rdfs:comment>Capturer la piece qui met le roi en echec</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#Interposition">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#ReponseEchec"/>
+        <rdfs:label>Interposition</rdfs:label>
+        <rdfs:comment>Placer une piece entre le roi et l attaquant (impossible contre cavalier ou pion)</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#FuiteRoi">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#ReponseEchec"/>
+        <rdfs:label>Fuite du Roi</rdfs:label>
+        <rdfs:comment>Deplacer le roi vers une case non attaquee</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.exemple.org/chess#EchecDouble">
+        <rdfs:subClassOf rdf:resource="http://www.exemple.org/chess#Echec"/>
+        <rdfs:label>Echec Double</rdfs:label>
+        <rdfs:comment>Deux pieces donnent echec simultanement - seule la fuite du roi est possible</rdfs:comment>
     </owl:Class>
 
 
