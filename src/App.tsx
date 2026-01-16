@@ -8,6 +8,9 @@ import Rules from "./pages/Rules";
 import Game from "./pages/Game";
 import NotFound from "./pages/NotFound";
 
+// Vercel Analytics
+import { Analytics } from "@vercel/analytics/react";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -24,6 +27,8 @@ const App = () => (
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
+      {/* Analytics must be rendered ONCE */}
+      <Analytics />
     </TooltipProvider>
   </QueryClientProvider>
 );
